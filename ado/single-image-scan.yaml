@@ -1,0 +1,21 @@
+trigger:
+- main
+
+pool:
+  name: aqua-old
+  
+steps:
+- script: echo Hello, world!
+- task: aquasecScanner-dev@4
+  inputs:
+    image: 'alpine:3.9.6'
+    scanType: 'hosted'
+    containerRuntime: 'docker'
+    register: false
+    hideBase: false
+    showNegligible: false
+    scanner: 'aquadev.azurecr.io/scanner:main-saas'
+    registry: 'DH'
+    connection: 'azure'
+    caCertificates: false
+  displayName: 'Aqua Scan'

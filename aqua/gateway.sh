@@ -1,0 +1,2 @@
+docker rm -f aqua-gateway
+docker run -d -p 3622:3622 -p 8444:8443 -e SCALOCK_DBHOST=host.docker.internal -e SCALOCK_DBNAME=trivy_scalock -e SCALOCK_DBUSER=postgres -e SCALOCK_DBPASSWORD=N0tall0wed -e SCALOCK_AUDIT_DBHOST=host.docker.internal -e SCALOCK_AUDIT_DBNAME=trivy_slk_audit -e SCALOCK_AUDIT_DBUSER=postgres -e SCALOCK_AUDIT_DBPASSWORD=N0tall0wed -e AQUA_CONSOLE_SECURE_ADDRESS=host.docker.internal:8443 -e SCALOCK_LOG_LEVEL=DEBUG --name aqua-gateway --restart=always aquadev.azurecr.io/gateway:main-onprem

@@ -1,0 +1,58 @@
+trigger:
+  - main
+
+pool:
+  name: aqua-old
+
+parameters:
+  - name: images
+    type: object
+    default:
+      - name: alpine
+        tag: 3.20
+        job_name: alpine_320
+      - name: alpine
+        tag: 3.19
+        job_name: alpine_319
+      - name: alpine
+        tag: 3.18
+        job_name: alpine_318
+      - name: alpine
+        tag: 3.17
+        job_name: alpine_317
+      - name: alpine
+        tag: 3.16
+        job_name: alpine_316
+
+
+jobs:
+  - ${{ each image in parameters.images }}:
+      - job: ${{ image.job_name }}
+        pool:
+          name: aqua
+        steps:
+
+          - script: docker pull ${{ image.name }}:${{ image.tag }}
+            displayName: Pull image
+
+          - task: CmdLine@2
+            displayName: List images
+            inputs:
+              script: docker image ls
+
+          - task: aquasecScanner-dev@4
+            displayName: 'Aqua Scan'
+            inputs:
+              image: ${{ image.name }}:${{ image.tag }}
+              containerRuntime: 'docker'
+              scanType: 'local'
+              register: true
+              hideBase: false
+              showNegligible: false
+              scanner: 'aquadev.azurecr.io/scanner:main-saas'
+              registry: 'DH'
+              connection: 'azure'
+              caCertificates: false
+
+          - script: docker image rm ${{ image.name }}:${{ image.tag }}
+            displayName: Remove image
